@@ -1,10 +1,11 @@
 import express from "express"
 import dotenv from "dotenv"
 import path from "path"
+import { connectDb } from "./utils/db.js"
 
 
 const app = express()
-dotenv.config()
+dotenv.config({quiet:true})
 
 const _dirname = path.resolve();
 
@@ -18,6 +19,17 @@ if(process.env.NODE_ENV === "production"){
 }
 
 const port = process.env.PORT || 3000
-app.listen(port,()=>{
-    console.log(`Server is running on port: ${port}`)
-})
+// app.listen(port,()=>{
+//     connectDb()
+//     console.log(`Server is running on port: ${port}`)
+// })
+
+const startServer = async()=>{
+    try {
+        await connectDb()
+        app.listen(port,()=> console.log(`Server is running on port: ${port}`))
+    } catch (error) {
+        console.log("Error staring the server", error)
+    }
+}
+startServer()
